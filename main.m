@@ -10,6 +10,11 @@ dwdt = @(t,w) [(I2-I3)/I1*w(2)*w(3);(I3-I1)/I2*w(3)*w(1);(I1-I2)/I1*w(1)*w(2)];
 % duration
 tmax = 30;
 % initial angular velocities: give most to w(2), but a tiny bit to w(1)
+% Some cool initial conditions to try: 
+% [0.01 1 0]
+% [0.01 1 1]
+% [0.01 10 1]
+% [0.01 1 .1]
 w_init = [0.01 1 0];
 
 % increase precision + detect flip events for the ODE solver
