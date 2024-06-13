@@ -49,3 +49,20 @@ for istep=1:length(te)
     % this offset some.
     pause(tau-0.01)
 end
+
+%% Frequency Analysis via Fourier Transform
+close all;
+
+% Calculate the Fast Fourier Transform (FFT)
+N = length(w); % Number of samples
+F=fft(w); % FFT of the signal
+P = abs(F).^2; % Power spectrum
+tau=t(2)-t(1); % Time step
+Fs=1/tau; % Sampling frequency
+dv = Fs / N; % Frequency resolution
+v = (0:N-1) * dv; % Frequency vector
+
+semilogy(v, P)
+xlabel('v')
+ylabel('P(v)')
+title('Power Spectrum')
