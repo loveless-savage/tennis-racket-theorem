@@ -6,10 +6,21 @@ I = zeros(3);
 I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
 % define Euler equations
 dwdt = @(t,w) [(I2-I3)/I1*w(2)*w(3);(I3-I1)/I2*w(3)*w(1);(I1-I2)/I1*w(1)*w(2)];
-% increase precision + detect flip events
+
+% duration
+tmax = 30;
+% initial angular velocities: give most to w(2), but a tiny bit to w(1)
+% Some cool initial conditions to try: 
+% [0.01 1 0]
+% [0.01 1 1]
+% [0.01 10 1]
+% [0.01 1 .1]
+w_init = [0.01 1 0];
+
+% increase precision + detect flip events for the ODE solver
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
 % solve system of ODEs
-[t,w,tflip,wflip,iflip] = ode45(dwdt,[0 30],[0.01 1 0],opts);
+[t,w,tflip,wflip,iflip] = ode45(dwdt,[0 tmax],w_init,opts);
 
 plot(t,w);
 grid on;
@@ -19,7 +30,7 @@ title('Three Axes of Angular Velocity');
 xlabel('t (s)','Interpreter','latex');
 ylabel('$\omega$ (rad/s)','Interpreter','latex');
 legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
-    Interpreter = 'latex');
+    Interpreter = 'latex',Location = 'best');
 
 %% Animation Station
 te = 0:0.1:30; % evenly spaced time array
@@ -66,3 +77,4 @@ semilogy(v, P)
 xlabel('v')
 ylabel('P(v)')
 title('Power Spectrum')
+legend('Axis1', 'Axis2', 'Axis3')
