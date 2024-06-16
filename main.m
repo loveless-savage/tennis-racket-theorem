@@ -4,9 +4,6 @@ clear; close all;
 % calculate inertia tensor
 I = zeros(3);
 I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
-% define Euler equations
-dwdt = @(t,w) [(I2-I3)/I1*w(2)*w(3);(I3-I1)/I2*w(3)*w(1);(I1-I2)/I1*w(1)*w(2)];
-
 % duration
 tmax = 30;
 % initial angular velocities: give most to w(2), but a tiny bit to w(1)
@@ -19,9 +16,36 @@ w_init = [0.01 1 0];
 
 % increase precision + detect flip events for the ODE solver
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
-% solve system of ODEs
-[t,w,tflip,wflip,iflip] = ode45(dwdt,[0 tmax],w_init,opts);
 
+% solve system of ODEs
+[t_raw,u,tflip,uflip,iflip] = ode45( ...
+    @(t,u) dwdt(t,u,I1,I2,I3), ...
+    [0 tmax], ...
+    [w_init, 1 0 0, 0 1 0], ...
+    opts);
+% collect angular velocities relative to each principal axis
+w_raw = u(:,1:3);
+wflip = uflip(:,1:3);
+% collect x & y rotation vectors so we can build a rotation matrix
+rotx_raw = u(:,4:6);
+roty_raw = u(:,7:9);
+
+% interpolate raw values w/ evenly spaced timesteps
+N = 2^ceil(log2(length(t_raw))); % next power of 2 above sample #
+t = (0:N-1)*tmax/N;
+w = interp1(t_raw,w_raw,t,'linear'); % FIXME: dim
+
+% to build interpolated rotation matrices, interpolate both axes...
+rotx = interp1(t_raw,rotx_raw,t,'linear'); % x-axis
+roty = interp1(t_raw,roty_raw,t,'linear'); % y-axis
+% ... and then extrapolate the z-axis
+rotz = cross(rotx,roty,2);
+% now combine all three axes into one structure
+rot = cat(3,rotx,roty,rotz);
+rot = permute(rot,[2,3,1]);
+% to get the 3x3 rotation matrix of frame n, type rot(:,:,n)
+
+%% show angular velocity components over time
 plot(t,w);
 grid on;
 hold on;
@@ -33,7 +57,7 @@ legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
     Interpreter = 'latex',Location = 'best');
 
 %% Animation Station
-te = 0:0.1:30; % evenly spaced time array
+te = 0:0.1:tmax; % evenly spaced time array
 we = interp1(t,w(:,1),te,'spline'); % fix when we know which column of w is theta
 A = max(we);
 
