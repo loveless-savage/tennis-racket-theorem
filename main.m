@@ -57,23 +57,44 @@ legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
 % this is definitely not perfect yet
 close all;
 % draw ellipse
-theta = linspace(0, 2*pi, 100); % array to build ellipse over
-z = I1 * ones(size(theta)); % Constant initial z-coordinate for the ellipse
-x = I2 * cos(theta);
-y = I3 * sin(theta);
+theta = linspace(0, 2*pi, 100);N = size(theta); % array to build ellipse over
+x1 = I2 * cos(theta);
+y1 = I3 * sin(theta);
+z1 = I1 * zeros(N);
+s1 = [x1;y1;z1];
+x2 = I2*zeros(N);
+y2 = I3*sin(theta);
+z2 = I2*cos(theta);
+s2 = [x2;y2;z2];
+x3 = I2*cos(theta);
+y3 = I3*zeros(N);
+z3 = I2*sin(theta);
+s3 = [x3;y3;z3];
+hold on
+fill3(x1,y1,z1,'b');
+fill3(x2,y2,z2,'r');
+fill3(x3,y3,z3,'y')
 % draw ellipse
-s = fill3(x,y,z,'b');
 boxlim = 4;
 light('Position', [4 4 4],'Style','Infinite')
+axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
+hold off
 % animate ellipse spinning
-for i = 1:length(w)
-    % rotate can only take a 1x3 array, so extract diagonals - maybe change
-    % which values we use to look at the rotation?
-    spin = [rot(1,1,i),rot(2,2,i),rot(3,3,i)];
-    rotate(s,spin,1);
-    drawnow;
-    pause(0.001);
+for n = 1:length(w)
+    clf;
+    sn1 = rot(:,:,n)*s1;
+    sn2 = rot(:,:,n)*s2;
+    sn3 = rot(:,:,n)*s3;
+    hold on;
+    fill3(sn1(1,:),sn1(2,:),sn1(3,:),'b');
+    fill3(sn2(1,:),sn2(2,:),sn2(3,:),'r');
+    fill3(sn3(1,:),sn3(2,:),sn3(3,:),'y');
+    light('Position', [4 4 4],'Style','Infinite')
     axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
+    view([20 20 20])
+    drawnow;
+    hold off;
+    pause(0.001);
 end
 %% Frequency Analysis via Fourier Transform
 close all;
