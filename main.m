@@ -62,7 +62,9 @@ z = I1 * ones(size(theta)); % Constant initial z-coordinate for the ellipse
 x = I2 * cos(theta);
 y = I3 * sin(theta);
 % draw ellipse
-s = plot3(x,y,z);
+s = fill3(x,y,z,'b');
+boxlim = 4;
+light('Position', [4 4 4],'Style','Infinite')
 % animate ellipse spinning
 for i = 1:length(w)
     % rotate can only take a 1x3 array, so extract diagonals - maybe change
@@ -71,7 +73,7 @@ for i = 1:length(w)
     rotate(s,spin,1);
     drawnow;
     pause(0.001);
-    axis([-3 3 -3 3 -3 3]);
+    axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
 end
 %% Frequency Analysis via Fourier Transform
 close all;
