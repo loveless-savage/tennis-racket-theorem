@@ -76,8 +76,8 @@ fill3(x2,y2,z2,'r');
 fill3(x3,y3,z3,'y')
 % draw ellipse
 boxlim = 4;
-light('Position', [4 4 4],'Style','Infinite')
 axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
+view([20 20 20])
 hold off
 % animate ellipse spinning
 for n = 1:length(w)
@@ -89,7 +89,6 @@ for n = 1:length(w)
     fill3(sn1(1,:),sn1(2,:),sn1(3,:),'b');
     fill3(sn2(1,:),sn2(2,:),sn2(3,:),'r');
     fill3(sn3(1,:),sn3(2,:),sn3(3,:),'y');
-    light('Position', [4 4 4],'Style','Infinite')
     axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
     view([20 20 20])
     drawnow;
