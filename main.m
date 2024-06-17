@@ -1,8 +1,5 @@
 clear; close all;
-% define tennis racket
-
-% calculate inertia tensor
-I = zeros(3);
+% define inertia tensor
 I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
 % duration
 tmax = 30;
@@ -56,35 +53,26 @@ ylabel('$\omega$ (rad/s)','Interpreter','latex');
 legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
     Interpreter = 'latex',Location = 'best');
 
-%% Animation Station
-te = 0:0.1:tmax; % evenly spaced time array
-we = interp1(t,w(:,1),te,'spline'); % fix when we know which column of w is theta
-A = max(we);
-
-tau=te(2)-te(1);
-for istep=1:length(te)
-    % Position of swing relative to the pivot
-    theta = we(istep);
-    xswing=l1*sin(theta);
-    yswing=-l1*cos(theta);
-    % position of head/legs with respect to swing
-    phi=A + A*cos(wp*te(istep));
-    xpers=l2*sin(phi + theta);
-    ypers=l2*cos(phi + theta);
-    % Plot the swing and the swinger
-    plot([0, xswing],[L,L+yswing],...
-        [xswing+xpers,xswing-xpers],[L+yswing-ypers,L+yswing+ypers])
-    % Make the x and y dimensions scale equally
-    axis([-L/2 L/2 0 L])
-    axis square
-    % We'd like the plots frames to show at intervals of tau so the movie
-    % matches the physical time scale.  However, the calculations
-    % and plotting take some time, so we decrease the pause a bit.
-    % Depending on the speed of your computer, you may need to adjust
-    % this offset some.
-    pause(tau-0.01)
+%% Animation
+% this is definitely not perfect yet
+close all;
+% draw ellipse
+theta = linspace(0, 2*pi, 100); % array to build ellipse over
+z = I1 * ones(size(theta)); % Constant initial z-coordinate for the ellipse
+x = I2 * cos(theta);
+y = I3 * sin(theta);
+% draw ellipse
+s = plot3(x,y,z);
+% animate ellipse spinning
+for i = 1:length(w)
+    % rotate can only take a 1x3 array, so extract diagonals - maybe change
+    % which values we use to look at the rotation?
+    spin = [rot(1,1,i),rot(2,2,i),rot(3,3,i)];
+    rotate(s,spin,1);
+    drawnow;
+    pause(0.001);
+    axis([-3 3 -3 3 -3 3]);
 end
-
 %% Frequency Analysis via Fourier Transform
 close all;
 
