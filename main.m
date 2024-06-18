@@ -25,6 +25,8 @@ opts = odeset('RelTol',1e-6,'Events',@flipEvent);
 % collect angular velocities relative to each principal axis
 w_raw = u(:,1:3);
 wflip = uflip(:,1:3);
+% determine the period, the time it takes for one flip
+period=tflip;
 % collect x & y rotation vectors so we can build a rotation matrix
 rotx_raw = u(:,4:6);
 roty_raw = u(:,7:9);
