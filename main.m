@@ -5,11 +5,11 @@ I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
 tmax = 30;
 % initial angular velocities: give most to w(2), but a tiny bit to w(1)
 % Some cool initial conditions to try: 
-% [0.01 1 0]
-% [0.01 1 1]
-% [0.01 10 1]
-% [0.01 1 .1]
-w_init = [0.01 1 0];
+% w_init = [0.01 1 0];
+% w_init = [0.01 1 1];
+% w_init = [0.01 10 1];
+% w_init = [0.01 1 .1];
+ w_init = [0.01 1 0];
 
 % increase precision + detect flip events for the ODE solver
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
@@ -54,7 +54,6 @@ legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
     Interpreter = 'latex',Location = 'best');
 
 %% Animation
-% this is definitely not perfect yet
 close all;
 % draw ellipse
 theta = linspace(0, 2*pi, 100);N = size(theta); % array to build ellipse over
@@ -70,15 +69,20 @@ x3 = I2*cos(theta);
 y3 = I3*zeros(N);
 z3 = I2*sin(theta);
 s3 = [x3;y3;z3];
-hold on
+hold on;
+% draw ellipse
 fill3(x1,y1,z1,'b');
 fill3(x2,y2,z2,'r');
 fill3(x3,y3,z3,'y')
-% draw ellipse
+title('Animation of Intermediate Axis Theorem');
+xlabel('x');
+ylabel('y');
+zlabel('z');
+legend('I2','I3','I1');
 boxlim = 4;
 axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
 view([20 20 20])
-hold off
+hold off;
 % animate ellipse spinning
 for n = 1:length(w)
     clf;
@@ -89,11 +93,16 @@ for n = 1:length(w)
     fill3(sn1(1,:),sn1(2,:),sn1(3,:),'b');
     fill3(sn2(1,:),sn2(2,:),sn2(3,:),'r');
     fill3(sn3(1,:),sn3(2,:),sn3(3,:),'y');
+    title('Animation of Intermediate Axis Theorem');
+    xlabel('x');
+    ylabel('y');
+    zlabel('z');
+    legend('I2','I3','I1');
     axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
     view([20 20 20])
     drawnow;
     hold off;
-    pause(0.001);
+    pause(0.0001);
 end
 %% Frequency Analysis via Fourier Transform
 close all;
