@@ -1,5 +1,7 @@
+% Andrew Jones, Eben Lonsdale, Matthew Rundquist
+
 clear; close all;
-% define inertia tensor
+% define the principle moments of inertia
 I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
 % duration
 tmax = 30;
@@ -116,8 +118,9 @@ Fs=1/tau; % Sampling frequency
 dv = Fs / N; % Frequency resolution
 v = (0:N-1) * dv; % Frequency vector
 
-semilogy(v, P)
-xlabel('v')
-ylabel('P(v)')
-title('Power Spectrum')
-legend('Axis1', 'Axis2', 'Axis3')
+% Plot the power spectrum for the Fourier Transform
+semilogy(v, P) % Plots on a log scale on the y-axis
+xlabel('v') % Labels the x-axis
+ylabel('P(v)') % Labels the y-axis
+title('Power Spectrum') % Puts in a title
+legend('Axis1', 'Axis2', 'Axis3') % Labels the power spectrum for each of the axis of rotation
