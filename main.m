@@ -59,16 +59,21 @@ legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
 
 %% Animation
 close all;
-% draw ellipse
-theta = linspace(0, 2*pi, 100);N = size(theta); % array to build ellipse over
+% array to build ellipse over
+theta = linspace(0, 2*pi, 100);N = size(theta);
+% ellipes are defined in terms of the prinicple moments of inertia of the
+% object
+% ellipse 1
 x1 = I2 * cos(theta);
 y1 = I3 * sin(theta);
 z1 = I1 * zeros(N);
 s1 = [x1;y1;z1];
+% ellipse 2
 x2 = I2*zeros(N);
 y2 = I3*sin(theta);
 z2 = I2*cos(theta);
 s2 = [x2;y2;z2];
+% ellipse 3
 x3 = I2*cos(theta);
 y3 = I3*zeros(N);
 z3 = I2*sin(theta);
@@ -89,10 +94,12 @@ view([20 20 20])
 hold off;
 % animate ellipse spinning
 for n = 1:length(w)
-    clf;
+    clf; % clear last ellipse
+    % rotate all the ellipse matrices
     sn1 = rot(:,:,n)*s1;
     sn2 = rot(:,:,n)*s2;
     sn3 = rot(:,:,n)*s3;
+    % redraw ellipses
     hold on;
     fill3(sn1(1,:),sn1(2,:),sn1(3,:),'b');
     fill3(sn2(1,:),sn2(2,:),sn2(3,:),'r');
