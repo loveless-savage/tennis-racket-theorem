@@ -109,18 +109,27 @@ end
 %% Frequency Analysis via Fourier Transform
 close all;
 
-% Calculate the Fast Fourier Transform (FFT)
-N = length(w); % Number of samples
-F=fft(w); % FFT of the signal
-P = abs(F).^2; % Power spectrum
-tau=t(2)-t(1); % Time step
-Fs=1/tau; % Sampling frequency
-dv = Fs / N; % Frequency resolution
-v = (0:N-1) * dv; % Frequency vector
+% Calculate the Fast Fourier Transform (FFT) for each axis
+N = length(t); % Number of samples
+tau = t(2) - t(1); % Time step
+Fs = 1 / tau; % Sampling frequency
+
+% Initialize power spectrum matrix
+P = zeros(N, 3);
+v = linspace(-Fs/2, Fs/2, N); % Frequency vector centered around zero
+
+for i = 1:3
+    F = fft(w(:, i)); % FFT of the signal for each axis
+    F = fftshift(F); % Shift zero frequency component to the center
+    P(:, i) = abs(F).^2 / N; % Power spectrum
+end
 
 % Plot the power spectrum for the Fourier Transform
+figure;
 semilogy(v, P) % Plots on a log scale on the y-axis
-xlabel('v') % Labels the x-axis
-ylabel('P(v)') % Labels the y-axis
-title('Power Spectrum') % Puts in a title
-legend('Axis1', 'Axis2', 'Axis3') % Labels the power spectrum for each of the axis of rotation
+xlim([-1 1]) % Limits the x-axis so as to make the plot more clear
+xlabel('Frequency (Hz)', 'Interpreter', 'latex'); % Labels the x-axis
+ylabel('Power', 'Interpreter', 'latex'); % Labels the y-axis
+title('Power Spectrum', 'Interpreter', 'latex'); % Puts in a title
+legend({'\(\omega_x\)', '\(\omega_y\)', '\(\omega_z\)'}, 'Interpreter', 'latex', 'Location', 'best'); % Labels the power spectrum for each of the axis of rotation
+grid on;
