@@ -1,9 +1,9 @@
 % Andrew Jones, Eben Lonsdale, Matthew Rundquist
-
 clear; close all;
-% define the principle moments of inertia
-I1 = 1; I2 = 2; I3 = 3; % test case intertial moment values to see if ODE works
-% duration
+
+% define the principal moments of inertia
+I1 = 1; I2 = 2; I3 = 3;
+% total duration of the simulation
 tmax = 30;
 % initial angular velocities: give most to w(2), but a tiny bit to w(1)
 % Some cool initial conditions to try: 
@@ -13,15 +13,15 @@ tmax = 30;
 % w_init = [0.01 1 .1];
  w_init = [0.01 1 0];
 
-% increase precision + detect flip events for the ODE solver
+% increase precision for the ODE solver + detect flip events
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
 
 % solve system of ODEs
 [t_raw,u,tflip,uflip,iflip] = ode45( ...
-    @(t,u) dwdt(t,u,I1,I2,I3), ...
-    [0 tmax], ...
-    [w_init, 1 0 0, 0 1 0], ...
-    opts);
+    @(t,u) dwdt(t,u,I1,I2,I3), ... % ODE
+    [0 tmax], ... % time range
+    [w_init, 1 0 0, 0 1 0], ... % initial angular velocities + unit axes
+    opts); % precision + events
 % collect angular velocities relative to each principal axis
 w_raw = u(:,1:3);
 wflip = uflip(:,1:3);
@@ -30,9 +30,9 @@ rotx_raw = u(:,4:6);
 roty_raw = u(:,7:9);
 
 % interpolate raw values w/ evenly spaced timesteps
-N = 2^ceil(log2(length(t_raw))); % next power of 2 above sample #
+N = 2^ceil(log2(length(t_raw))); % next power of 2 above ode45's sample#
 t = (0:N-1)*tmax/N;
-w = interp1(t_raw,w_raw,t,'linear'); % FIXME: dim
+w = interp1(t_raw,w_raw,t,'linear');
 
 % to build interpolated rotation matrices, interpolate both axes...
 rotx = interp1(t_raw,rotx_raw,t,'linear'); % x-axis
@@ -48,7 +48,7 @@ rot = permute(rot,[2,3,1]);
 plot(t,w);
 grid on;
 hold on;
-plot(tflip,wflip(:,2),'*');
+plot(tflip,wflip(:,2),'*'); % star the events marking each period
 title('Three Axes of Angular Velocity');
 xlabel('t (s)','Interpreter','latex');
 ylabel('$\omega$ (rad/s)','Interpreter','latex');
