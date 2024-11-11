@@ -1,18 +1,20 @@
 % Andrew Jones, Eben Lonsdale, Matthew Rundquist
 clear; close all;
 
+%% physical parameters -- modify these for a different simulation
 % define the principal moments of inertia
 I1 = 1; I2 = 2; I3 = 3;
-% total duration of the simulation
-tmax = 30;
+% total duration of the simulation in seconds
+tmax = 80;
 % initial angular velocities: give most to w(2), but a tiny bit to w(1)
 % Some cool initial conditions to try: 
 % w_init = [0.01 1 0];
 % w_init = [0.01 1 1];
 % w_init = [0.01 10 1];
 % w_init = [0.01 1 .1];
- w_init = [0.01 1 0];
+w_init = [0.01 3 0];
 
+%% calculate motion
 % increase precision for the ODE solver + detect flip events
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
 
@@ -50,12 +52,14 @@ rot = permute(rot,[2,3,1]);
 plot(t,w);
 grid on;
 hold on;
+ymax = max(wflip,[],"all");
 plot(tflip,wflip(:,2),'*'); % star the events marking each period
 title('Three Axes of Angular Velocity');
 xlabel('t (s)','Interpreter','latex');
 ylabel('$\omega$ (rad/s)','Interpreter','latex');
+ylim([-1.2*ymax 1.2*ymax])
 legend('\(\omega_x\)','\(\omega_y\)','\(\omega_z\)','Full Period', ...
-    Interpreter = 'latex',Location = 'best');
+    Interpreter = 'latex',Location = 'southeast');
 
 %% Animation
 close all;
@@ -70,7 +74,7 @@ z1 = I1 * zeros(N);
 s1 = [x1;y1;z1];
 % ellipse 2
 x2 = I2*zeros(N);
-y2 = I3*sin(theta);
+y2 = I3*sin(theta); 
 z2 = I2*cos(theta);
 s2 = [x2;y2;z2];
 % ellipse 3
