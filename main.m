@@ -1,7 +1,7 @@
 % Andrew Jones, Eben Lonsdale, Matthew Rundquist
 clear; close all;
 
-%% physical parameters -- modify these for a different simulation
+% physical parameters -- modify these for a different simulation
 % define the principal moments of inertia
 I1 = 1; I2 = 2; I3 = 3;
 % total duration of the simulation in seconds
@@ -12,9 +12,8 @@ tmax = 80;
 % w_init = [0.01 1 1];
 % w_init = [0.01 10 1];
 % w_init = [0.01 1 .1];
-w_init = [0.01 3 0];
+w_init = [0.01 1 0];
 
-%% calculate motion
 % increase precision for the ODE solver + detect flip events
 opts = odeset('RelTol',1e-6,'Events',@flipEvent);
 
@@ -54,7 +53,7 @@ grid on;
 hold on;
 ymax = max(wflip,[],"all");
 plot(tflip,wflip(:,2),'*'); % star the events marking each period
-title('Three Axes of Angular Velocity');
+title('Three Components of Angular Velocity');
 xlabel('t (s)','Interpreter','latex');
 ylabel('$\omega$ (rad/s)','Interpreter','latex');
 ylim([-1.2*ymax 1.2*ymax])
@@ -68,19 +67,19 @@ theta = linspace(0, 2*pi, 100);N = size(theta);
 % ellipes are defined in terms of the prinicple moments of inertia of the
 % object
 % ellipse 1
-x1 = I2 * cos(theta);
-y1 = I3 * sin(theta);
-z1 = I1 * zeros(N);
+x1 = I1 * zeros(N);
+y1 = I2 * cos(theta);
+z1 = I3 * sin(theta);
 s1 = [x1;y1;z1];
 % ellipse 2
-x2 = I2*zeros(N);
-y2 = I3*sin(theta); 
-z2 = I2*cos(theta);
+x2 = I1 * sin(theta);
+y2 = I2 * zeros(N);
+z2 = I3 * cos(theta);
 s2 = [x2;y2;z2];
 % ellipse 3
-x3 = I2*cos(theta);
-y3 = I3*zeros(N);
-z3 = I2*sin(theta);
+x3 = I1 * cos(theta);
+y3 = I2 * sin(theta);
+z3 = I3 * zeros(N);
 s3 = [x3;y3;z3];
 hold on;
 % draw ellipse
@@ -108,11 +107,15 @@ for n = 1:length(w)
     fill3(sn1(1,:),sn1(2,:),sn1(3,:),'b');
     fill3(sn2(1,:),sn2(2,:),sn2(3,:),'r');
     fill3(sn3(1,:),sn3(2,:),sn3(3,:),'y');
+    % show axis directions for comparison
+    plot3([-boxlim boxlim],[0,0],[0,0],'k');
+    plot3([0,0],[-boxlim boxlim],[0,0],'k');
+    plot3([0,0],[0,0],[-boxlim boxlim],'k');
     title('Animation of Intermediate Axis Theorem');
     xlabel('x');
     ylabel('y');
     zlabel('z');
-    legend('I2','I3','I1');
+    legend('I1','I2','I3');
     axis([-boxlim boxlim -boxlim boxlim -boxlim boxlim]);
     view([20 20 20])
     drawnow;
